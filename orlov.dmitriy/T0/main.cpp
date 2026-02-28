@@ -3,5 +3,5 @@
 int main()
 {
 	std:: << "orlov.dmitriy" << std::endl;
-	return0
+	return 0;
 }
