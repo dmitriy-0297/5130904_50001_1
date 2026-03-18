@@ -6,6 +6,7 @@
 #include "right_trapezoid.hpp"
 #include "composite_shape.hpp"
 
+
 void printShapeInfo(const std::shared_ptr<Shape>& shape) {
     std::cout << std::fixed << std::setprecision(2);
 
