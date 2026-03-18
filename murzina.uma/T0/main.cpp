@@ -2,6 +2,6 @@
 
 int main()
 {
-    std::cout << "dunaev.daniil" << std::endl;
+    std::cout << "murzina.uma" << std::endl;
     return 0;
 }
