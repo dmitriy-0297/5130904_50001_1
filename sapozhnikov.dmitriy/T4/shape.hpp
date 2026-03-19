@@ -4,30 +4,28 @@
 #include <iostream>
 #include "point.hpp"
 
-struct FrameRect {
+struct FrameRect
+{
 
-	double x;
-	double y;
-	double width;
-	double height;
-
+  double x;
+  double y;
+  double width;
+  double height;
 };
 
-class Shape {
+class Shape
+{
 
 public:
+  virtual ~Shape() = default;
 
-	virtual ~Shape() = default;
+  virtual double getArea() const = 0;
+  virtual Point getCenter() const = 0;
+  virtual void move(double dx, double dy) = 0;
+  virtual void scale(double coefficient) = 0;
+  virtual std::string getName() const = 0;
 
-	virtual double getArea() const = 0;
-	virtual Point getCenter() const = 0;
-	virtual void move(double dx, double dy) = 0;
-	virtual void scale(double coefficient) = 0;
-	virtual std::string getName() const = 0;
-
-	virtual FrameRect getFrameRect() const = 0;
-
-
+  virtual FrameRect getFrameRect() const = 0;
 };
 
 #endif

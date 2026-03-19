@@ -1,11 +1,11 @@
 #ifndef POINT_HPP
 #define POINT_HPP
 
-struct Point {
+struct Point
+{
 
-	double x;
-	double y;
-
+  double x;
+  double y;
 };
 
 #endif

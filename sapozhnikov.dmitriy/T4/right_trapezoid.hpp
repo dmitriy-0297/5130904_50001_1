@@ -3,11 +3,11 @@
 
 #include "shape.hpp"
 
-class RightTrapezoid : public Shape {
+class RightTrapezoid : public Shape
+{
 
 public:
-
-  RightTrapezoid(const Point& leftBottom, double bottomBase, double topBase, double height);
+  RightTrapezoid(const Point &leftBottom, double bottomBase, double topBase, double height);
 
   double getArea() const override;
   Point getCenter() const override;
@@ -17,12 +17,10 @@ public:
   FrameRect getFrameRect() const override;
 
 private:
-
   Point leftBottom_;
   double bottomBase_;
   double topBase_;
   double height_;
-
 };
 
 #endif
