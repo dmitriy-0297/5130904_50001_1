@@ -32,7 +32,6 @@ void printShapeInfo(const std::shared_ptr<Shape>& shape) {
         std::cout << "[" << name << ", (" << center.x << ", " << center.y << "), " << shape->getArea() << "]" << std::endl;
     }
 
-
 }
 
 int main() {
@@ -54,7 +53,7 @@ int main() {
     auto composite = std::make_shared<CompositeShape>();
 
     composite->addShape(std::make_shared<Rectangle>(Point{ 0.0, 0.0 }, Point{ 2.0, 2.0 }));
-    composite->addShape(std::make_shared<RightTrapezoid>(Point{ 2.0, 0.0 }, 2.0, 2.0, 2.0)); 
+    composite->addShape(std::make_shared<RightTrapezoid>(Point{ 2.0, 0.0 }, 2.0, 2.0, 2.0));
     shapes.push_back(composite);
 
     std::cout << "   BEFORE SCALING   " << std::endl;
