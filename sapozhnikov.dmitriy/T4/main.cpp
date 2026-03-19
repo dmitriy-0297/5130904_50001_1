@@ -32,6 +32,7 @@ void printShapeInfo(const std::shared_ptr<Shape>& shape) {
         std::cout << "[" << name << ", (" << center.x << ", " << center.y << "), " << shape->getArea() << "]" << std::endl;
     }
 
+
 }
 
 int main() {
