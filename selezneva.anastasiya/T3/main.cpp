@@ -123,11 +123,9 @@ namespace selezneva {
         for (int i = 0; i < vertexCount; ++i) {
             Point currentPoint = { 0, 0 };
             inputStream >> currentPoint;
-
             if (!inputStream) {
                 return inputStream;
             }
-
             temporaryPolygon.points.push_back(currentPoint);
         }
 
@@ -139,15 +137,18 @@ namespace selezneva {
     }
 
     bool isValidLine(const std::string& line) {
-        if (line.empty()) {
+        size_t firstChar = line.find_first_not_of(" \t");
+        if (firstChar == std::string::npos) {
             return false;
         }
 
-        std::istringstream lineStream(line);
+        std::string trimmedLine = line.substr(firstChar);
+        std::istringstream lineStream(trimmedLine);
+
         int vertexCount = 0;
         lineStream >> vertexCount;
 
-        if (lineStream.fail() || vertexCount <= 0) {
+        if (lineStream.fail() || vertexCount < 3) {
             return false;
         }
 
@@ -159,8 +160,8 @@ namespace selezneva {
             }
         }
 
-        char leftoverCharacter;
-        if (lineStream >> leftoverCharacter) {
+        char leftover;
+        if (lineStream >> leftover) {
             return false;
         }
 
@@ -178,9 +179,10 @@ namespace selezneva {
         std::string currentLine;
 
         while (std::getline(inputFile, currentLine)) {
-            if (!currentLine.empty()) {
-                allLines.push_back(currentLine);
+            if (currentLine.find_first_not_of(" \t") == std::string::npos) {
+                continue;
             }
+            allLines.push_back(currentLine);
         }
 
         std::vector<std::string> validLines;
@@ -432,11 +434,10 @@ namespace selezneva {
                 [](double acc, const Polygon& p) { return acc + p.area(); });
             double mean = sum / polygons.size();
             std::cout << std::fixed << std::setprecision(1) << mean << std::endl;
-        }
-        else if (std::all_of(parameter.begin(), parameter.end(), ::isdigit)) {
+        }else if (std::all_of(parameter.begin(), parameter.end(), ::isdigit)) {
             int targetCount = std::stoi(parameter);
             if (targetCount < 3) {
-                std::cout << "0.0" << std::endl;
+                std::cout << INVALID_COMMAND << std::endl;
                 return;
             }
             double sum = getAreaSumForVertexCount(polygons, targetCount);
@@ -455,10 +456,17 @@ namespace selezneva {
             return;
         }
 
+        std::istringstream polyStream(polygonString);
         Polygon targetPolygon;
-        std::istringstream(polygonString) >> targetPolygon;
+        polyStream >> targetPolygon;
 
-        if (targetPolygon.vertexCount() == 0) {
+        if (polyStream.fail() || targetPolygon.vertexCount() < 3) {
+            std::cout << INVALID_COMMAND << std::endl;
+            return;
+        }
+
+        char leftover;
+        if (polyStream >> leftover) {
             std::cout << INVALID_COMMAND << std::endl;
             return;
         }
@@ -484,10 +492,17 @@ namespace selezneva {
             return;
         }
 
+        std::istringstream polyStream(polygonString);
         Polygon targetPolygon;
-        std::istringstream(polygonString) >> targetPolygon;
+        polyStream >> targetPolygon;
 
-        if (targetPolygon.vertexCount() == 0) {
+        if (polyStream.fail() || targetPolygon.vertexCount() < 3) {
+            std::cout << INVALID_COMMAND << std::endl;
+            return;
+        }
+
+        char leftover;
+        if (polyStream >> leftover) {
             std::cout << INVALID_COMMAND << std::endl;
             return;
         }
