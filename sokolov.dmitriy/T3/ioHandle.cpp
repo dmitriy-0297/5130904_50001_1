@@ -53,7 +53,12 @@ std::istream &operator>>(std::istream &in, Polygon &p) {
 
     size_t nPoints = 0;
 
-    if (!(in >> nPoints) || nPoints < 3) {
+    if (!in >> nPoints) {
+        return in;
+    }
+
+    if (nPoints < 3) {
+        in.setstate(std::ios_base::failbit);
         return in;
     }
 
