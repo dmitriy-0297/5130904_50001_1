@@ -17,16 +17,15 @@ int main()
     );
 
     std::cout << "Прочитано объектов: " << data.size() << std::endl;
+    std::cout << "Результат:" << std::endl;
 
-    if (!data.empty()) {
-        std::cout << "Результат:" << std::endl;
-        std::sort(data.begin(), data.end(), murzina::compareDataStruct);
-        std::copy(
-            data.begin(),
-            data.end(),
-            std::ostream_iterator<DataStruct>(std::cout, "\n")
-        );
-    }
+    std::sort(data.begin(), data.end(), murzina::compareDataStruct);
+
+    std::copy(
+        data.begin(),
+        data.end(),
+        std::ostream_iterator<DataStruct>(std::cout, "\n")
+    );
 
     return 0;
 }
