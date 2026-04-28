@@ -16,8 +16,8 @@ int main()
         std::back_inserter(data)
     );
 
-    std::cout << "Прочитано объектов: " << data.size() << std::endl;
-    std::cout << "Результат:" << std::endl;
+    std::cout << "Processed objects: " << data.size() << std::endl;
+    std::cout << "Result:" << std::endl;
 
     std::sort(data.begin(), data.end(), murzina::compareDataStruct);
 

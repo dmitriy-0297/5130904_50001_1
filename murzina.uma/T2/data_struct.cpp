@@ -22,125 +22,142 @@ namespace murzina
             return in;
         }
 
-        size_t pos = 0;
+        try {
+            size_t pos = 0;
 
-        double key1_val = 0.0;
-        long long num = 0;
-        unsigned long long den = 0;
-        std::string key3_val;
+            double key1_val = 0.0;
+            long long num = 0;
+            unsigned long long den = 1;
+            std::string key3_val;
 
-        bool key1_found = false;
-        bool key2_found = false;
-        bool key3_found = false;
+            bool key1_found = false;
+            bool key2_found = false;
+            bool key3_found = false;
 
-        while (pos < line.length())
-        {
-            if (line[pos] == ':' && pos + 4 < line.length())
+            while (pos < line.length())
             {
-                if (line.substr(pos + 1, 4) == "key1")
+                if (line[pos] == ':' && pos + 4 < line.length())
                 {
-                    pos += 5;
-                    while (pos < line.length() && std::isspace(line[pos])) pos++;
-
-                    std::string num_str;
-                    while (pos < line.length() && (std::isdigit(line[pos]) || line[pos] == '.' || line[pos] == '-' || line[pos] == '+'))
+                    if (line.substr(pos + 1, 4) == "key1")
                     {
-                        num_str += line[pos];
-                        pos++;
-                    }
-
-                    if (pos < line.length() && (line[pos] == 'd' || line[pos] == 'D'))
-                    {
-                        pos++;
-                    }
-
-                    key1_val = std::stod(num_str);
-                    key1_found = true;
-                }
-                else if (line.substr(pos + 1, 4) == "key2")
-                {
-                    pos += 5;
-                    while (pos < line.length() && std::isspace(line[pos])) pos++;
-
-                    if (pos < line.length() && line[pos] == '(')
-                    {
-                        pos++;
-                    }
-
-                    while (pos < line.length() && (line[pos] == ':' || std::isspace(line[pos]))) pos++;
-
-                    if (pos + 1 < line.length() && line[pos] == 'N')
-                    {
-                        pos++;
+                        pos += 5;
                         while (pos < line.length() && std::isspace(line[pos])) pos++;
 
                         std::string num_str;
-                        while (pos < line.length() && (std::isdigit(line[pos]) || line[pos] == '-'))
+                        bool has_digit = false;
+                        while (pos < line.length() && (std::isdigit(line[pos]) || line[pos] == '.' || line[pos] == '-' || line[pos] == '+'))
                         {
                             num_str += line[pos];
                             pos++;
+                            has_digit = true;
                         }
-                        num = std::stoll(num_str);
+
+                        if (!has_digit || num_str.empty()) {
+                            throw std::invalid_argument("Invalid key1 format");
+                        }
+
+                        if (pos < line.length() && (line[pos] == 'd' || line[pos] == 'D'))
+                        {
+                            pos++;
+                        }
+
+                        key1_val = std::stod(num_str);
+                        key1_found = true;
                     }
-
-                    while (pos < line.length() && (line[pos] == ':' || std::isspace(line[pos]))) pos++;
-
-                    if (pos + 1 < line.length() && line[pos] == 'D')
+                    else if (line.substr(pos + 1, 4) == "key2")
                     {
-                        pos++;
+                        pos += 5;
                         while (pos < line.length() && std::isspace(line[pos])) pos++;
 
-                        std::string den_str;
-                        while (pos < line.length() && std::isdigit(line[pos]))
+                        if (pos < line.length() && line[pos] == '(')
                         {
-                            den_str += line[pos];
                             pos++;
                         }
-                        den = std::stoull(den_str);
+
+                        while (pos < line.length() && (line[pos] == ':' || std::isspace(line[pos]))) pos++;
+
+                        if (pos + 1 < line.length() && line[pos] == 'N')
+                        {
+                            pos++;
+                            while (pos < line.length() && std::isspace(line[pos])) pos++;
+
+                            std::string num_str;
+                            while (pos < line.length() && (std::isdigit(line[pos]) || line[pos] == '-'))
+                            {
+                                num_str += line[pos];
+                                pos++;
+                            }
+                            if (!num_str.empty()) {
+                                num = std::stoll(num_str);
+                            }
+                        }
+
+                        while (pos < line.length() && (line[pos] == ':' || std::isspace(line[pos]))) pos++;
+
+                        if (pos + 1 < line.length() && line[pos] == 'D')
+                        {
+                            pos++;
+                            while (pos < line.length() && std::isspace(line[pos])) pos++;
+
+                            std::string den_str;
+                            while (pos < line.length() && std::isdigit(line[pos]))
+                            {
+                                den_str += line[pos];
+                                pos++;
+                            }
+                            if (!den_str.empty()) {
+                                den = std::stoull(den_str);
+                                if (den == 0) den = 1;
+                            }
+                        }
+
+                        key2_found = true;
                     }
-
-                    key2_found = true;
-                }
-                else if (line.substr(pos + 1, 4) == "key3")
-                {
-                    pos += 5;
-                    while (pos < line.length() && std::isspace(line[pos])) pos++;
-
-                    if (pos < line.length() && line[pos] == '"')
+                    else if (line.substr(pos + 1, 4) == "key3")
                     {
-                        pos++;
-                        key3_val.clear();
-                        while (pos < line.length() && line[pos] != '"')
-                        {
-                            key3_val += line[pos];
-                            pos++;
-                        }
+                        pos += 5;
+                        while (pos < line.length() && std::isspace(line[pos])) pos++;
+
                         if (pos < line.length() && line[pos] == '"')
                         {
                             pos++;
+                            key3_val.clear();
+                            while (pos < line.length() && line[pos] != '"')
+                            {
+                                key3_val += line[pos];
+                                pos++;
+                            }
+                            if (pos < line.length() && line[pos] == '"')
+                            {
+                                pos++;
+                            }
                         }
-                    }
 
-                    key3_found = true;
+                        key3_found = true;
+                    }
+                    else
+                    {
+                        pos++;
+                    }
                 }
                 else
                 {
                     pos++;
                 }
             }
+
+            if (key1_found && key2_found && key3_found)
+            {
+                dest.key1 = key1_val;
+                dest.key2 = { num, den };
+                dest.key3 = key3_val;
+            }
             else
             {
-                pos++;
+                in.setstate(std::ios::failbit);
             }
         }
-
-        if (key1_found && key2_found && key3_found)
-        {
-            dest.key1 = key1_val;
-            dest.key2 = { num, den };
-            dest.key3 = key3_val;
-        }
-        else
+        catch (const std::exception&)
         {
             in.setstate(std::ios::failbit);
         }
@@ -165,8 +182,8 @@ namespace murzina
             return lhs.key1 < rhs.key1;
         }
 
-        double lhs_ratio = static_cast<double>(lhs.key2.first) / lhs.key2.second;
-        double rhs_ratio = static_cast<double>(rhs.key2.first) / rhs.key2.second;
+        double lhs_ratio = (lhs.key2.second != 0) ? static_cast<double>(lhs.key2.first) / lhs.key2.second : 0.0;
+        double rhs_ratio = (rhs.key2.second != 0) ? static_cast<double>(rhs.key2.first) / rhs.key2.second : 0.0;
 
         if (std::abs(lhs_ratio - rhs_ratio) > 1e-9)
         {
