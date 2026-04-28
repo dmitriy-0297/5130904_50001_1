@@ -17,15 +17,16 @@ int main()
     );
 
     std::cout << "Processed objects: " << data.size() << std::endl;
-    std::cout << "Result:" << std::endl;
-
-    std::sort(data.begin(), data.end(), murzina::compareDataStruct);
-
-    std::copy(
-        data.begin(),
-        data.end(),
-        std::ostream_iterator<DataStruct>(std::cout, "\n")
-    );
+    
+    if (!data.empty()) {
+        std::cout << "Result:" << std::endl;
+        std::sort(data.begin(), data.end(), murzina::compareDataStruct);
+        std::copy(
+            data.begin(),
+            data.end(),
+            std::ostream_iterator<DataStruct>(std::cout, "\n")
+        );
+    }
 
     return 0;
 }
