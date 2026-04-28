@@ -17,7 +17,7 @@ int main()
     );
 
     std::cout << "Прочитано объектов: " << data.size() << std::endl;
-
+    
     if (!data.empty()) {
         std::cout << "Результат:" << std::endl;
         std::sort(data.begin(), data.end(), murzina::compareDataStruct);
