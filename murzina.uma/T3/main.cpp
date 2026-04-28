@@ -336,16 +336,16 @@ int main(int argc, char* argv[]) {
             std::cerr << "Error: Filename parameter is required" << std::endl;
             return EXIT_FAILURE;
         }
-        
+
         std::ifstream file(argv[1]);
         if (!file.is_open()) {
             std::cerr << "Error: Cannot open file " << argv[1] << std::endl;
             return EXIT_FAILURE;
         }
-        
+
         std::vector<geometry::Polygon> polygons;
         std::string line;
-        
+
         while (std::getline(file, line)) {
             if (line.empty()) continue;
             std::istringstream iss(line);
@@ -355,16 +355,16 @@ int main(int argc, char* argv[]) {
             }
         }
         file.close();
-        
+
         CommandProcessor processor(std::move(polygons));
         std::string command;
-        
+
         while (std::getline(std::cin, command)) {
             if (!command.empty()) {
                 processor.processCommand(command);
             }
         }
-        
+
         return EXIT_SUCCESS;
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
