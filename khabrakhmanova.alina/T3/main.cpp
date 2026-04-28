@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <map>
 #include <set>
+#include <cstdlib>
 
 struct Point {
     int x, y;
@@ -108,7 +109,8 @@ std::vector<Polygon> readPolygons(const std::string& filename) {
             poly.points.push_back({x, y});
         }
 
-        if (valid && poly.points.size() == static_cast<size_t>(n)) {
+        char leftover;
+        if (valid && poly.points.size() == static_cast<size_t>(n) && !(iss >> leftover)) {
             polygons.push_back(poly);
         }
     }
@@ -142,13 +144,6 @@ Polygon parsePolygonFromString(const std::string& str) {
     return poly;
 }
 
-bool hasVertexCount(const std::vector<Polygon>& polygons, int count) {
-    return std::any_of(polygons.begin(), polygons.end(),
-        [count](const Polygon& p) {
-            return static_cast<int>(p.points.size()) == count;
-        });
-}
-
 void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
     try {
         double result = 0.0;
@@ -176,7 +171,7 @@ void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
         }
         else {
             int vertexCount = std::stoi(param);
-            if (vertexCount < 3 || !hasVertexCount(polygons, vertexCount)) {
+            if (vertexCount < 3) {
                 std::cout << "<INVALID COMMAND>" << std::endl;
                 return;
             }
@@ -270,7 +265,7 @@ void cmdCount(const std::vector<Polygon>& polygons, const std::string& param) {
         }
         else {
             int vertexCount = std::stoi(param);
-            if (vertexCount < 3 || !hasVertexCount(polygons, vertexCount)) {
+            if (vertexCount < 3) {
                 std::cout << "<INVALID COMMAND>" << std::endl;
                 return;
             }
