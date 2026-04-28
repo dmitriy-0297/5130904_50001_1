@@ -6,8 +6,8 @@
 //класс прямоугольник
 class Rectangle : public Shape {
 private:
-    Point bottomLeft_;//левый нижний угол 
-    Point topRight_;//правый верхний угол 
+    Point bottomLeft_;//левый нижний угол
+    Point topRight_;//правый верхний угол
 
 public:
     //для приема углов

@@ -65,4 +65,4 @@ public:
     void print(std::ostream& os) const override;
 };
 
-#endif 
+#endif
