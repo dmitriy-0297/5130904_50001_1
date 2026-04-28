@@ -13,11 +13,11 @@
 
 struct Point {
     int x, y;
-    
+
     bool operator==(const Point& other) const {
         return x == other.x && y == other.y;
     }
-    
+
     bool operator<(const Point& other) const {
         return x < other.x || (x == other.x && y < other.y);
     }
@@ -25,7 +25,7 @@ struct Point {
 
 struct Polygon {
     std::vector<Point> points;
-    
+
     bool operator==(const Polygon& other) const {
         if (points.size() != other.points.size()) return false;
         return std::equal(points.begin(), points.end(), other.points.begin());
@@ -34,7 +34,7 @@ struct Polygon {
 
 double polygonArea(const Polygon& poly) {
     if (poly.points.size() < 3) return 0.0;
-    
+
     double area = 0.0;
     size_t n = poly.points.size();
     for (size_t i = 0; i < n; ++i) {
@@ -56,7 +56,7 @@ bool isRightAngle(const Point& a, const Point& b, const Point& c) {
 bool hasRightAngle(const Polygon& poly) {
     size_t n = poly.points.size();
     if (n < 3) return false;
-    
+
     for (size_t i = 0; i < n; ++i) {
         const Point& prev = poly.points[(i - 1 + n) % n];
         const Point& curr = poly.points[i];
@@ -70,7 +70,7 @@ bool hasRightAngle(const Polygon& poly) {
 
 bool isPermutation(const Polygon& a, const Polygon& b) {
     if (a.points.size() != b.points.size()) return false;
-    
+
     std::multiset<Point> setA(a.points.begin(), a.points.end());
     std::multiset<Point> setB(b.points.begin(), b.points.end());
     return setA == setB;
@@ -81,37 +81,37 @@ std::vector<Polygon> readPolygons(const std::string& filename) {
     if (!file.is_open()) {
         return {};
     }
-    
+
     std::vector<Polygon> polygons;
     std::string line;
-    
+
     while (std::getline(file, line)) {
         if (line.empty()) continue;
-        
+
         std::istringstream iss(line);
         int n;
         if (!(iss >> n)) continue;
-        
+
         Polygon poly;
         bool valid = true;
-        
+
         for (int i = 0; i < n; ++i) {
             char open, comma, close;
             int x, y;
-            
-            if (!(iss >> open >> x >> comma >> y >> close) || 
+
+            if (!(iss >> open >> x >> comma >> y >> close) ||
                 open != '(' || comma != ';' || close != ')') {
                 valid = false;
                 break;
             }
             poly.points.push_back({x, y});
         }
-        
+
         if (valid && poly.points.size() == static_cast<size_t>(n)) {
             polygons.push_back(poly);
         }
     }
-    
+
     return polygons;
 }
 
@@ -119,9 +119,9 @@ Polygon parsePolygonFromString(const std::string& str) {
     std::istringstream iss(str);
     Polygon poly;
     int n;
-    
+
     if (!(iss >> n)) return poly;
-    
+
     for (int i = 0; i < n; ++i) {
         char open, comma, close;
         int x, y;
@@ -131,18 +131,18 @@ Polygon parsePolygonFromString(const std::string& str) {
             }
         }
     }
-    
+
     if (poly.points.size() != static_cast<size_t>(n)) {
         poly.points.clear();
     }
-    
+
     return poly;
 }
 
 void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
     try {
         double result = 0.0;
-        
+
         if (param == "EVEN") {
             result = std::accumulate(polygons.begin(), polygons.end(), 0.0,
                 [](double sum, const Polygon& p) {
@@ -171,7 +171,7 @@ void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
                     return sum + ((p.points.size() == static_cast<size_t>(vertexCount)) ? polygonArea(p) : 0.0);
                 });
         }
-        
+
         std::cout << std::fixed << std::setprecision(1) << result << std::endl;
     }
     catch (const std::invalid_argument&) {
@@ -187,7 +187,7 @@ void cmdMax(const std::vector<Polygon>& polygons, const std::string& param) {
         std::cout << "<INVALID COMMAND>" << std::endl;
         return;
     }
-    
+
     try {
         if (param == "AREA") {
             auto maxIt = std::max_element(polygons.begin(), polygons.end(),
@@ -217,7 +217,7 @@ void cmdMin(const std::vector<Polygon>& polygons, const std::string& param) {
         std::cout << "<INVALID COMMAND>" << std::endl;
         return;
     }
-    
+
     try {
         if (param == "AREA") {
             auto minIt = std::min_element(polygons.begin(), polygons.end(),
@@ -245,7 +245,7 @@ void cmdMin(const std::vector<Polygon>& polygons, const std::string& param) {
 void cmdCount(const std::vector<Polygon>& polygons, const std::string& param) {
     try {
         size_t result = 0;
-        
+
         if (param == "EVEN") {
             result = std::count_if(polygons.begin(), polygons.end(),
                 [](const Polygon& p) { return p.points.size() % 2 == 0; });
@@ -261,7 +261,7 @@ void cmdCount(const std::vector<Polygon>& polygons, const std::string& param) {
                     return p.points.size() == static_cast<size_t>(vertexCount);
                 });
         }
-        
+
         std::cout << result << std::endl;
     }
     catch (const std::invalid_argument&) {
@@ -290,17 +290,17 @@ int main(int argc, char* argv[]) {
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
         return EXIT_FAILURE;
     }
-    
+
     std::vector<Polygon> polygons = readPolygons(argv[1]);
-    
+
     std::string line;
     while (std::getline(std::cin, line)) {
         if (line.empty()) continue;
-        
+
         std::istringstream iss(line);
         std::string command;
         iss >> command;
-        
+
         if (command == "AREA") {
             std::string param;
             iss >> param;
@@ -338,6 +338,6 @@ int main(int argc, char* argv[]) {
             std::cout << "<INVALID COMMAND>" << std::endl;
         }
     }
-    
+
     return EXIT_SUCCESS;
 }
