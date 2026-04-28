@@ -10,6 +10,7 @@
 #include <map>
 #include <set>
 
+
 struct Point {
     int x, y;
     
