@@ -10,7 +10,6 @@
 #include <map>
 #include <set>
 
-
 struct Point {
     int x, y;
 
@@ -92,6 +91,8 @@ std::vector<Polygon> readPolygons(const std::string& filename) {
         int n;
         if (!(iss >> n)) continue;
 
+        if (n < 3) continue;
+
         Polygon poly;
         bool valid = true;
 
@@ -122,6 +123,8 @@ Polygon parsePolygonFromString(const std::string& str) {
 
     if (!(iss >> n)) return poly;
 
+    if (n < 3) return poly;
+
     for (int i = 0; i < n; ++i) {
         char open, comma, close;
         int x, y;
@@ -137,6 +140,13 @@ Polygon parsePolygonFromString(const std::string& str) {
     }
 
     return poly;
+}
+
+bool hasVertexCount(const std::vector<Polygon>& polygons, int count) {
+    return std::any_of(polygons.begin(), polygons.end(),
+        [count](const Polygon& p) {
+            return static_cast<int>(p.points.size()) == count;
+        });
 }
 
 void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
@@ -166,6 +176,10 @@ void cmdArea(const std::vector<Polygon>& polygons, const std::string& param) {
         }
         else {
             int vertexCount = std::stoi(param);
+            if (vertexCount < 3 || !hasVertexCount(polygons, vertexCount)) {
+                std::cout << "<INVALID COMMAND>" << std::endl;
+                return;
+            }
             result = std::accumulate(polygons.begin(), polygons.end(), 0.0,
                 [vertexCount](double sum, const Polygon& p) {
                     return sum + ((p.points.size() == static_cast<size_t>(vertexCount)) ? polygonArea(p) : 0.0);
@@ -256,6 +270,10 @@ void cmdCount(const std::vector<Polygon>& polygons, const std::string& param) {
         }
         else {
             int vertexCount = std::stoi(param);
+            if (vertexCount < 3 || !hasVertexCount(polygons, vertexCount)) {
+                std::cout << "<INVALID COMMAND>" << std::endl;
+                return;
+            }
             result = std::count_if(polygons.begin(), polygons.end(),
                 [vertexCount](const Polygon& p) {
                     return p.points.size() == static_cast<size_t>(vertexCount);
@@ -273,6 +291,11 @@ void cmdCount(const std::vector<Polygon>& polygons, const std::string& param) {
 }
 
 void cmdPerms(const std::vector<Polygon>& polygons, const Polygon& target) {
+    if (target.points.size() < 3) {
+        std::cout << "<INVALID COMMAND>" << std::endl;
+        return;
+    }
+
     int count = std::count_if(polygons.begin(), polygons.end(),
         [&target](const Polygon& p) {
             return isPermutation(p, target);
