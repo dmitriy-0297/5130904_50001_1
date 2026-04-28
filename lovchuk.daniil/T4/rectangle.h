@@ -19,7 +19,7 @@ public:
     //центр
     Point getCenter() const override;
 
-    //перемещение 
+    //перемещение
     void move(double dx, double dy) override;
 
     //масштабирование относительно центра
