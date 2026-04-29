@@ -12,6 +12,7 @@
 #include <cctype>
 #include <iterator>
 #include <climits>
+#include <regex>
 
 using namespace std;
 using namespace std::placeholders;
@@ -20,6 +21,7 @@ struct Point {
     int x, y;
 
     Point() : x(0), y(0) {}
+    Point(int _x, int _y) : x(_x), y(_y) {}
 
     bool operator==(const Point& other) const {
         return x == other.x && y == other.y;
@@ -33,28 +35,6 @@ struct Point {
 ostream& operator<<(ostream& os, const Point& p) {
     os << "(" << p.x << ";" << p.y << ")";
     return os;
-}
-
-istream& operator>>(istream& is, Point& p) {
-    char ch1, ch2, ch3;
-    int x, y;
-
-    is >> ch1;
-    if (ch1 != '(') {
-        is.setstate(ios::failbit);
-        return is;
-    }
-
-    is >> x >> ch2 >> y >> ch3;
-
-    if (ch2 != ';' || ch3 != ')') {
-        is.setstate(ios::failbit);
-        return is;
-    }
-
-    p.x = x;
-    p.y = y;
-    return is;
 }
 
 int orientation(const Point& p, const Point& q, const Point& r) {
@@ -404,14 +384,19 @@ void processIntersections(const vector<string>& tokens) {
 
         Polygon query;
         for (int i = 0; i < vertexCount; ++i) {
-            stringstream ss(tokens[2 + i * 2] + " " + tokens[3 + i * 2]);
-            Point p;
-            ss >> p;
-            if (ss.fail()) {
+            string pointStr = tokens[2 + i * 2] + " " + tokens[3 + i * 2];
+
+            int x, y;
+            char ch1, ch2, ch3;
+            stringstream ss(pointStr);
+            ss >> ch1 >> x >> ch2 >> y >> ch3;
+
+            if (ss.fail() || ch1 != '(' || ch2 != ';' || ch3 != ')') {
                 cout << "<INVALID COMMAND>" << endl;
                 return;
             }
-            query.points.push_back(p);
+
+            query.points.push_back(Point(x, y));
         }
 
         int count = count_if(polygons.begin(), polygons.end(),
@@ -444,17 +429,22 @@ void readPolygons(const string& filename) {
         bool valid = true;
 
         for (int i = 0; i < vertexCount; ++i) {
-            Point p;
-            ss >> p;
-            if (ss.fail()) {
+            int x, y;
+            char ch1, ch2, ch3;
+
+            ss >> ch1 >> x >> ch2 >> y >> ch3;
+
+            if (ss.fail() || ch1 != '(' || ch2 != ';' || ch3 != ')') {
                 valid = false;
                 break;
             }
-            poly.points.push_back(p);
+
+            poly.points.push_back(Point(x, y));
         }
 
         string remaining;
         ss >> remaining;
+
         if (valid && remaining.empty() && poly.points.size() == static_cast<size_t>(vertexCount)) {
             polygons.push_back(poly);
         }
