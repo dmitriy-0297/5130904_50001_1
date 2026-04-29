@@ -263,6 +263,10 @@ void processArea(const vector<string>& tokens) {
     else {
         try {
             int vertexCount = stoi(tokens[1]);
+            if (vertexCount < 3) {
+                cout << "<INVALID COMMAND>" << endl;
+                return;
+            }
             vector<Polygon> filtered;
             copy_if(polygons.begin(), polygons.end(), back_inserter(filtered),
                 [vertexCount](const Polygon& p) { return p.getVertexCount() == vertexCount; });
@@ -351,6 +355,10 @@ void processCount(const vector<string>& tokens) {
     else {
         try {
             int vertexCount = stoi(tokens[1]);
+            if (vertexCount < 3) {
+                cout << "<INVALID COMMAND>" << endl;
+                return;
+            }
             int count = count_if(polygons.begin(), polygons.end(),
                 [vertexCount](const Polygon& p) { return p.getVertexCount() == vertexCount; });
             cout << count << endl;
@@ -381,6 +389,10 @@ void processIntersections(const vector<string>& tokens) {
 
     try {
         int vertexCount = stoi(tokens[1]);
+        if (vertexCount < 3) {
+            cout << "<INVALID COMMAND>" << endl;
+            return;
+        }
         if (static_cast<int>(tokens.size()) < 2 + vertexCount * 2) {
             cout << "<INVALID COMMAND>" << endl;
             return;
@@ -392,6 +404,10 @@ void processIntersections(const vector<string>& tokens) {
             stringstream ss(pointStr);
             Point p;
             ss >> p;
+            if (ss.fail()) {
+                cout << "<INVALID COMMAND>" << endl;
+                return;
+            }
             query.points.push_back(p);
         }
 
@@ -434,9 +450,7 @@ void readPolygons(const string& filename) {
             poly.points.push_back(p);
         }
 
-        string remaining;
-        ss >> remaining;
-        if (!valid || !remaining.empty() || poly.points.size() != static_cast<size_t>(vertexCount)) {
+        if (!valid || poly.points.size() != static_cast<size_t>(vertexCount)) {
             continue;
         }
 
