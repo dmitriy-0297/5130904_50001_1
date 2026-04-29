@@ -11,7 +11,6 @@
 #include <iomanip>
 #include <cctype>
 #include <iterator>
-#include <tuple>
 
 using namespace std;
 using namespace std::placeholders;
@@ -96,7 +95,7 @@ struct Polygon {
         for (size_t i = 0; i < points.size(); ++i) {
             const Point& p1 = points[i];
             const Point& p2 = points[(i + 1) % points.size()];
-            area += (p1.x * p2.y - p2.x * p1.y);
+            area += static_cast<double>(p1.x * p2.y - p2.x * p1.y);
         }
         return fabs(area) / 2.0;
     }
@@ -126,7 +125,9 @@ struct Polygon {
             if (p1.y == p2.y) continue;
 
             if (p.y > min(p1.y, p2.y) && p.y <= max(p1.y, p2.y)) {
-                double xIntersect = p1.x + (double)(p.y - p1.y) * (p2.x - p1.x) / (p2.y - p1.y);
+                double xIntersect = static_cast<double>(p1.x) +
+                    static_cast<double>(p.y - p1.y) * static_cast<double>(p2.x - p1.x) /
+                    static_cast<double>(p2.y - p1.y);
                 if (xIntersect >= p.x) {
                     intersections++;
                 }
@@ -222,20 +223,24 @@ void processArea(const vector<string>& tokens) {
     }
 
     if (tokens[1] == "EVEN") {
-        vector<double> areas;
-        copy_if(polygons.begin(), polygons.end(), back_inserter(areas),
+        vector<Polygon> filtered;
+        copy_if(polygons.begin(), polygons.end(), back_inserter(filtered),
             bind(isEvenVertexCount, _1));
-        transform(areas.begin(), areas.end(), areas.begin(),
+
+        vector<double> areas(filtered.size());
+        transform(filtered.begin(), filtered.end(), areas.begin(),
             bind(getArea, _1));
 
         double sum = accumulate(areas.begin(), areas.end(), 0.0);
         cout << fixed << setprecision(1) << sum << endl;
     }
     else if (tokens[1] == "ODD") {
-        vector<double> areas;
-        copy_if(polygons.begin(), polygons.end(), back_inserter(areas),
+        vector<Polygon> filtered;
+        copy_if(polygons.begin(), polygons.end(), back_inserter(filtered),
             bind(isOddVertexCount, _1));
-        transform(areas.begin(), areas.end(), areas.begin(),
+
+        vector<double> areas(filtered.size());
+        transform(filtered.begin(), filtered.end(), areas.begin(),
             bind(getArea, _1));
 
         double sum = accumulate(areas.begin(), areas.end(), 0.0);
@@ -258,10 +263,12 @@ void processArea(const vector<string>& tokens) {
     else {
         try {
             int vertexCount = stoi(tokens[1]);
-            vector<double> areas;
-            copy_if(polygons.begin(), polygons.end(), back_inserter(areas),
+            vector<Polygon> filtered;
+            copy_if(polygons.begin(), polygons.end(), back_inserter(filtered),
                 [vertexCount](const Polygon& p) { return p.getVertexCount() == vertexCount; });
-            transform(areas.begin(), areas.end(), areas.begin(),
+
+            vector<double> areas(filtered.size());
+            transform(filtered.begin(), filtered.end(), areas.begin(),
                 bind(getArea, _1));
 
             double sum = accumulate(areas.begin(), areas.end(), 0.0);
@@ -374,7 +381,7 @@ void processIntersections(const vector<string>& tokens) {
 
     try {
         int vertexCount = stoi(tokens[1]);
-        if (tokens.size() < 2 + vertexCount * 2) {
+        if (static_cast<int>(tokens.size()) < 2 + vertexCount * 2) {
             cout << "<INVALID COMMAND>" << endl;
             return;
         }
