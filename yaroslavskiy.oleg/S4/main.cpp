@@ -9,7 +9,7 @@
 #include <vector>
 #include <cctype>
 
-const std::string ERROR_EMPTY_COMMAND = ">> ОШИБКА: Пустая команда!"; 
+const std::string ERROR_EMPTY_COMMAND = ">> ОШИБКА: Пустая команда!";
 const std::string ERROR_UNKNOWN_COMMAND = ">> ОШИБКА: Неизвестная команда!";
 const std::string ERROR_EMPTY_WORD = ">> ОШИБКА: Пустое слово!";
 const std::string ERROR_WRONG_LINE = ">> ОШИБКА: Некорректный номер строки!";
