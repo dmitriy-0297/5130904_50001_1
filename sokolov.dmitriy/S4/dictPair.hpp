@@ -4,8 +4,8 @@
 #include <string>
 
 struct DictPair {
-	std::wstring word;
-	std::wstring translation;
+    std::wstring word;
+    std::wstring translation;
 };
 
 #endif

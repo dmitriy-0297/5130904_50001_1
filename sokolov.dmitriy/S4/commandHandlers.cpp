@@ -97,7 +97,7 @@ void handleInsert(std::wistringstream &args, ERDict &dict) {
         std::wcout << L"- This translation is already in the dictionary\n\n";
         return;
     }
-    
+
     translations.insert(pos, translation);
 
     std::wcout << L"- Inserted successfully\n\n";
