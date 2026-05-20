@@ -15,18 +15,18 @@ static void processNeighborsRecursive(
     std::map<int, bool>& visited,
     std::map<int, int>& predecessors,
     int current) {
-    
+
     if (index >= neighbors.size()) {
         return;
     }
-    
+
     const auto& [neighbor, weight] = neighbors[index];
     if (!visited[neighbor]) {
         visited[neighbor] = true;
         predecessors[neighbor] = current;
         q.push(neighbor);
     }
-    
+
     processNeighborsRecursive(neighbors, index + 1, q, visited, predecessors, current);
 }
 
@@ -37,21 +37,21 @@ static void bfsRecursive(
     const DirectedWeightedGraph& graph,
     int target,
     bool& found) {
-    
+
     if (q.empty() || found) {
         return;
     }
-    
+
     int current = q.front();
     q.pop();
-    
+
     if (current == target) {
         found = true;
         return;
     }
-    
+
     processNeighborsRecursive(graph.getNeighbors(current), 0, q, visited, predecessors, current);
-    
+
     bfsRecursive(q, visited, predecessors, graph, target, found);
 }
 
@@ -60,42 +60,42 @@ static void initVisitedRecursive(
     std::set<int>::const_iterator end,
     std::map<int, bool>& visited,
     std::map<int, int>& predecessors) {
-    
+
     if (it == end) {
         return;
     }
-    
+
     int node = *it;
     visited[node] = false;
     predecessors[node] = -1;
-    
+
     initVisitedRecursive(std::next(it), end, visited, predecessors);
 }
 
 std::pair<std::map<int, int>, bool> waveShortestPath(
     const DirectedWeightedGraph& graph, int source, int target) {
-    
+
     if (!graph.hasNode(source) || !graph.hasNode(target)) {
         throw std::invalid_argument(ERROR_NODE_NOT_FOUND);
     }
-    
+
     if (graph.isEmpty()) {
         throw std::runtime_error(ERROR_GRAPH_EMPTY);
     }
-    
+
     std::map<int, int> predecessors;
     std::map<int, bool> visited;
     std::queue<int> q;
-    
+
     initVisitedRecursive(graph.getNodes().begin(), graph.getNodes().end(),
                         visited, predecessors);
-    
+
     visited[source] = true;
     q.push(source);
-    
+
     bool found = false;
     bfsRecursive(q, visited, predecessors, graph, target, found);
-    
+
     return {predecessors, found};
 }
 
@@ -103,11 +103,11 @@ static void reconstructPathRecursive(
     int at,
     const std::map<int, int>& predecessors,
     std::vector<int>& path) {
-    
+
     if (at == -1) {
         return;
     }
-    
+
     reconstructPathRecursive(predecessors.at(at), predecessors, path);
     path.push_back(at);
 }
@@ -116,18 +116,18 @@ std::vector<int> reconstructPath(
     const DirectedWeightedGraph& graph,
     const std::map<int, int>& predecessors,
     int target) {
-    
+
     std::vector<int> path;
-    
+
     if (!graph.hasNode(target)) {
         throw std::invalid_argument(ERROR_PATH_RECONSTRUCTION);
     }
-    
+
     auto it = predecessors.find(target);
     if (it == predecessors.end() || it->second == -1) {
         return path;
     }
-    
+
     reconstructPathRecursive(target, predecessors, path);
     return path;
 }

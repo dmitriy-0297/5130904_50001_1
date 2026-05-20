@@ -19,10 +19,10 @@ void DirectedWeightedGraph::clearRecursive(
     if (it == adjacency_list_.end()) {
         return;
     }
-    
+
     it->second.clear();
     it->second.shrink_to_fit();
-    
+
     clearRecursive(std::next(it));
 }
 
@@ -64,7 +64,7 @@ bool DirectedWeightedGraph::hasEdge(int from, int to) const {
     if (!nodeExists(from) || !nodeExists(to)) {
         throw std::invalid_argument(ERROR_BOTH_NODES_NOT_FOUND);
     }
-    
+
     const auto& neighbors = adjacency_list_.at(from);
     auto it = std::find_if(neighbors.begin(), neighbors.end(),
                            [to](const std::pair<int, double>& edge) {
@@ -87,7 +87,7 @@ void DirectedWeightedGraph::removeNodeFromAllEdgesRecursive(
     if (it == adjacency_list_.end()) {
         return;
     }
-    
+
     auto& neighbors = it->second;
     neighbors.erase(
         std::remove_if(neighbors.begin(), neighbors.end(),
@@ -96,7 +96,7 @@ void DirectedWeightedGraph::removeNodeFromAllEdgesRecursive(
                       }),
         neighbors.end()
     );
-    
+
     removeNodeFromAllEdgesRecursive(std::next(it), node);
 }
 
@@ -104,15 +104,15 @@ void DirectedWeightedGraph::removeNode(int node) {
     if (!nodeExists(node)) {
         throw std::invalid_argument(ERROR_NODE_NOT_FOUND);
     }
-    
+
     removeNodeFromAllEdgesRecursive(adjacency_list_.begin(), node);
-    
+
     auto it = adjacency_list_.find(node);
     if (it != adjacency_list_.end()) {
         it->second.clear();
         it->second.shrink_to_fit();
     }
-    
+
     adjacency_list_.erase(node);
     nodes_.erase(node);
 }
@@ -121,17 +121,17 @@ void DirectedWeightedGraph::addEdge(int from, int to, double weight) {
     if (!nodeExists(from) || !nodeExists(to)) {
         throw std::invalid_argument(ERROR_BOTH_NODES_NOT_FOUND);
     }
-    
+
     if (from == to) {
         throw std::invalid_argument(ERROR_SELF_LOOP);
     }
-    
+
     auto& neighbors = adjacency_list_[from];
     auto it = std::find_if(neighbors.begin(), neighbors.end(),
                           [to](const std::pair<int, double>& edge) {
                               return edge.first == to;
                           });
-    
+
     if (it != neighbors.end()) {
         it->second = weight;
     } else {
@@ -143,24 +143,24 @@ double DirectedWeightedGraph::removeEdge(int from, int to) {
     if (!nodeExists(from) || !nodeExists(to)) {
         throw std::invalid_argument(ERROR_BOTH_NODES_NOT_FOUND);
     }
-    
+
     auto& neighbors = adjacency_list_[from];
     auto it = std::find_if(neighbors.begin(), neighbors.end(),
                           [to](const std::pair<int, double>& edge) {
                               return edge.first == to;
                           });
-    
+
     if (it == neighbors.end()) {
         throw std::invalid_argument(ERROR_EDGE_NOT_FOUND);
     }
-    
+
     double weight = it->second;
     neighbors.erase(it);
-    
+
     if (neighbors.empty()) {
         neighbors.shrink_to_fit();
     }
-    
+
     return weight;
 }
 
@@ -168,17 +168,17 @@ double DirectedWeightedGraph::getEdgeWeight(int from, int to) const {
     if (!nodeExists(from) || !nodeExists(to)) {
         throw std::invalid_argument(ERROR_BOTH_NODES_NOT_FOUND);
     }
-    
+
     const auto& neighbors = adjacency_list_.at(from);
     auto it = std::find_if(neighbors.begin(), neighbors.end(),
                           [to](const std::pair<int, double>& edge) {
                               return edge.first == to;
                           });
-    
+
     if (it == neighbors.end()) {
         throw std::invalid_argument(ERROR_EDGE_NOT_FOUND);
     }
-    
+
     return it->second;
 }
 
@@ -211,12 +211,12 @@ void DirectedWeightedGraph::printNeighborsRecursive(
     if (index >= neighbors.size()) {
         return;
     }
-    
+
     std::cout << neighbors[index].first << "[" << neighbors[index].second << "]";
     if (index < neighbors.size() - 1) {
         std::cout << ", ";
     }
-    
+
     printNeighborsRecursive(neighbors, index + 1);
 }
 
@@ -226,7 +226,7 @@ void DirectedWeightedGraph::printGraphRecursive(
     if (it == nodes.end()) {
         return;
     }
-    
+
     int node = *it;
     std::cout << "  " << node << " -> ";
     auto neighbors = getNeighbors(node);
@@ -236,7 +236,7 @@ void DirectedWeightedGraph::printGraphRecursive(
         printNeighborsRecursive(neighbors, 0);
     }
     std::cout << std::endl;
-    
+
     printGraphRecursive(std::next(it), nodes);
 }
 

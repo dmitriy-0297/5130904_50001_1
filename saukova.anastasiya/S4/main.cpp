@@ -68,7 +68,7 @@ std::string convertCommand(const std::string& input) {
                 break;
             }
         }
-        
+
         if (isNumber) {
             int num = std::stoi(input);
             switch (num) {
@@ -91,28 +91,28 @@ std::string convertCommand(const std::string& input) {
 
 void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std::istream& in) {
     std::string line;
-    
+
     std::cout << "> ";
     if (!std::getline(in, line)) {
         std::cout << "\nEOF detected. Goodbye!\n";
         graph.reset();
         return;
     }
-    
+
     if (line.empty()) {
         processCommandsRecursive(graph, in);
         return;
     }
-    
+
     std::istringstream iss(line);
     std::string firstToken;
     iss >> firstToken;
-    
+
     if (firstToken.empty()) {
         processCommandsRecursive(graph, in);
         return;
     }
-    
+
     std::string cleanToken;
     for (char c : firstToken) {
         if (c >= 'A' && c <= 'Z') {
@@ -123,17 +123,17 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
             cleanToken += c;
         }
     }
-    
+
     if (cleanToken.empty()) {
         cleanToken = firstToken;
     }
 
     std::string cmd = convertCommand(cleanToken);
-    
+
     for (char& c : cmd) {
         c = toupper(c);
     }
-    
+
     try {
         if (cmd == "ADD_NODE") {
             int node;
@@ -320,16 +320,16 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
     catch (const std::exception& e) {
         std::cout << "Critical error: " << e.what() << "\n";
     }
-    
+
     processCommandsRecursive(graph, in);
 }
 
 int main() {
     std::unique_ptr<DirectedWeightedGraph> graph = std::make_unique<DirectedWeightedGraph>();
-    
+
     std::cout << "Directed Weighted Graph - Shortest Path Algorithms\n";
     printHelp();
-    
+
     try {
         processCommandsRecursive(graph, std::cin);
     }
@@ -348,8 +348,8 @@ int main() {
         graph.reset();
         return EXIT_FAILURE;
     }
-    
+
     graph.reset();
-    
+
     return EXIT_SUCCESS;
 }

@@ -15,10 +15,10 @@ class DirectedWeightedGraph {
 public:
     DirectedWeightedGraph();
     ~DirectedWeightedGraph();
-    
+
     DirectedWeightedGraph(const DirectedWeightedGraph&) = delete;
     DirectedWeightedGraph& operator=(const DirectedWeightedGraph&) = delete;
-    
+
     DirectedWeightedGraph(DirectedWeightedGraph&& other) noexcept;
     DirectedWeightedGraph& operator=(DirectedWeightedGraph&& other) noexcept;
 
@@ -49,7 +49,7 @@ private:
     static const std::string ERROR_EMPTY_GRAPH;
 
     bool nodeExists(int node) const;
-    
+
     void removeNodeFromAllEdgesRecursive(typename std::map<int, std::vector<std::pair<int, double>>>::iterator it, int node);
     void printNeighborsRecursive(const std::vector<std::pair<int, double>>& neighbors, size_t index) const;
     void printGraphRecursive(std::set<int>::const_iterator it, const std::set<int>& nodes) const;
