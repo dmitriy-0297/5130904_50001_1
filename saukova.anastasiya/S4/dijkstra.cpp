@@ -23,7 +23,8 @@ static void relaxEdgesRecursive(
         return;
     }
 
-    const auto& [v, weight] = neighbors[index];
+    int v = neighbors[index].first;
+    double weight = neighbors[index].second;
 
     if (weight < 0) {
         throw std::runtime_error(ERROR_NEGATIVE_WEIGHT);
@@ -32,7 +33,7 @@ static void relaxEdgesRecursive(
     if (distances.at(u) + weight < newDistances[v]) {
         newDistances[v] = distances.at(u) + weight;
         predecessors[v] = u;
-        pq.push({newDistances[v], v});
+        pq.push(std::make_pair(newDistances[v], v));
     }
 
     relaxEdgesRecursive(neighbors, index + 1, distances, newDistances,
@@ -51,8 +52,11 @@ static void processQueueRecursive(
         return;
     }
 
-    auto [dist_u, u] = pq.top();
+    std::pair<double, int> top = pq.top();
     pq.pop();
+
+    double dist_u = top.first;
+    int u = top.second;
 
     if (dist_u > distances[u]) {
         processQueueRecursive(pq, distances, predecessors, graph);
@@ -104,9 +108,9 @@ std::pair<std::map<int, double>, std::map<int, int>> dijkstraShortestPath(
                           distances, predecessors, source);
 
     distances[source] = 0.0;
-    pq.push({0.0, source});
+    pq.push(std::make_pair(0.0, source));
 
     processQueueRecursive(pq, distances, predecessors, graph);
 
-    return {distances, predecessors};
+    return std::make_pair(distances, predecessors);
 }

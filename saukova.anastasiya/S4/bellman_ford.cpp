@@ -19,7 +19,9 @@ static void relaxNeighborsRecursive(
         return;
     }
 
-    const auto& [v, weight] = neighbors[index];
+    int v = neighbors[index].first;
+    double weight = neighbors[index].second;
+
     if (distances[u] + weight < distances[v]) {
         distances[v] = distances[u] + weight;
         predecessors[v] = u;
@@ -83,7 +85,9 @@ static void checkNegativeNeighborsRecursive(
         return;
     }
 
-    const auto& [v, weight] = neighbors[index];
+    int v = neighbors[index].first;
+    double weight = neighbors[index].second;
+
     if (distances.at(u) + weight < distances.at(v)) {
         throw std::runtime_error(ERROR_NEGATIVE_CYCLE);
     }
@@ -152,5 +156,5 @@ std::pair<std::map<int, double>, std::map<int, int>> bellmanFordShortestPath(
     checkNegativeCycleRecursive(graph.getNodes().begin(), graph.getNodes().end(),
                                graph, distances);
 
-    return {distances, predecessors};
+    return std::make_pair(distances, predecessors);
 }

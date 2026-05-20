@@ -20,7 +20,8 @@ static void processNeighborsRecursive(
         return;
     }
 
-    const auto& [neighbor, weight] = neighbors[index];
+    int neighbor = neighbors[index].first;
+
     if (!visited[neighbor]) {
         visited[neighbor] = true;
         predecessors[neighbor] = current;
@@ -96,7 +97,7 @@ std::pair<std::map<int, int>, bool> waveShortestPath(
     bool found = false;
     bfsRecursive(q, visited, predecessors, graph, target, found);
 
-    return {predecessors, found};
+    return std::make_pair(predecessors, found);
 }
 
 static void reconstructPathRecursive(
@@ -108,7 +109,10 @@ static void reconstructPathRecursive(
         return;
     }
 
-    reconstructPathRecursive(predecessors.at(at), predecessors, path);
+    std::map<int, int>::const_iterator it = predecessors.find(at);
+    if (it != predecessors.end()) {
+        reconstructPathRecursive(it->second, predecessors, path);
+    }
     path.push_back(at);
 }
 
@@ -123,7 +127,7 @@ std::vector<int> reconstructPath(
         throw std::invalid_argument(ERROR_PATH_RECONSTRUCTION);
     }
 
-    auto it = predecessors.find(target);
+    std::map<int, int>::const_iterator it = predecessors.find(target);
     if (it == predecessors.end() || it->second == -1) {
         return path;
     }

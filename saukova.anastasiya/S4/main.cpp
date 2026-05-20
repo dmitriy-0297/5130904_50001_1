@@ -34,7 +34,10 @@ void printHelp() {
 
 void printDistances(const std::map<int, double>& distances, int source) {
     std::cout << "Shortest distances from " << source << ":\n";
-    for (const auto& [node, distance] : distances) {
+    for (std::map<int, double>::const_iterator it = distances.begin();
+         it != distances.end(); ++it) {
+        int node = it->first;
+        double distance = it->second;
         std::cout << "  To " << node << ": ";
         if (distance == std::numeric_limits<double>::infinity()) {
             std::cout << "unreachable";
@@ -62,8 +65,8 @@ void printPath(const std::vector<int>& path) {
 std::string convertCommand(const std::string& input) {
     if (!input.empty()) {
         bool isNumber = true;
-        for (char c : input) {
-            if (c < '0' || c > '9') {
+        for (size_t i = 0; i < input.size(); ++i) {
+            if (input[i] < '0' || input[i] > '9') {
                 isNumber = false;
                 break;
             }
@@ -114,13 +117,10 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
     }
 
     std::string cleanToken;
-    for (char c : firstToken) {
-        if (c >= 'A' && c <= 'Z') {
-            cleanToken += c;
-        } else if (c >= 'a' && c <= 'z') {
+    for (size_t i = 0; i < firstToken.size(); ++i) {
+        char c = firstToken[i];
+        if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')) {
             cleanToken += toupper(c);
-        } else if (c >= '0' && c <= '9') {
-            cleanToken += c;
         }
     }
 
@@ -129,10 +129,6 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
     }
 
     std::string cmd = convertCommand(cleanToken);
-
-    for (char& c : cmd) {
-        c = toupper(c);
-    }
 
     try {
         if (cmd == "ADD_NODE") {
@@ -221,8 +217,9 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
                     } else if (graph->isEmpty()) {
                         std::cout << "Graph is empty.\n";
                     } else {
-                        auto [dist, pred] = dijkstraShortestPath(*graph, source);
-                        printDistances(dist, source);
+                        std::pair<std::map<int, double>, std::map<int, int> > result =
+                            dijkstraShortestPath(*graph, source);
+                        printDistances(result.first, source);
                     }
                 }
                 catch (const std::invalid_argument& e) {
@@ -247,8 +244,9 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
                     } else if (graph->isEmpty()) {
                         std::cout << "Graph is empty.\n";
                     } else {
-                        auto [dist, pred] = bellmanFordShortestPath(*graph, source);
-                        printDistances(dist, source);
+                        std::pair<std::map<int, double>, std::map<int, int> > result =
+                            bellmanFordShortestPath(*graph, source);
+                        printDistances(result.first, source);
                     }
                 }
                 catch (const std::invalid_argument& e) {
@@ -273,9 +271,10 @@ void processCommandsRecursive(std::unique_ptr<DirectedWeightedGraph>& graph, std
                     } else if (graph->isEmpty()) {
                         std::cout << "Graph is empty.\n";
                     } else {
-                        auto [pred, success] = waveShortestPath(*graph, source, target);
-                        if (success) {
-                            auto path = reconstructPath(*graph, pred, target);
+                        std::pair<std::map<int, int>, bool> result =
+                            waveShortestPath(*graph, source, target);
+                        if (result.second) {
+                            std::vector<int> path = reconstructPath(*graph, result.first, target);
                             printPath(path);
                         } else {
                             std::cout << "No path found from " << source
