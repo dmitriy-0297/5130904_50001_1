@@ -452,7 +452,7 @@ void testNormalizeWord()
     assert(normalizeWord("Data-123") == "data123");
 }
 
-} 
+}
 
 void FrequencyDictionary::insert(const std::string& key, int countDelta)
 {
