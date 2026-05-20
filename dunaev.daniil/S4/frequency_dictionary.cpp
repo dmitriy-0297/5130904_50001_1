@@ -18,8 +18,10 @@ const std::string POSITIVE_COUNT_ERROR = "частота должна быть �
 const std::string INPUT_FILE_OPEN_ERROR = "не удалось открыть входной файл: ";
 const std::string OUTPUT_FILE_OPEN_ERROR = "не удалось открыть выходной файл: ";
 const std::string INPUT_FILE_CLOSE_ERROR = "не удалось закрыть входной файл: ";
-const std::string OUTPUT_FILE_CLOSE_ERROR = "не удалось закрыть выходной файл: ";
-const std::string TEST_SEPARATOR = "============================================================";
+const std::string OUTPUT_FILE_CLOSE_ERROR =
+    "не удалось закрыть выходной файл: ";
+const std::string TEST_SEPARATOR =
+    "============================================================";
 const std::string TEST_ERROR_PREFIX = "ОШИБКА: ";
 
 WordRecord toWordRecord(const std::pair<const std::string, int>& item)
@@ -45,7 +47,9 @@ bool decodeContinuationBytes(const std::string& text,
     return decodeContinuationBytes(text, position + 1, remaining - 1, value);
 }
 
-bool decodeNextCodePoint(const std::string& text, std::size_t& index, char32_t& codePoint)
+bool decodeNextCodePoint(const std::string& text,
+                         std::size_t& index,
+                         char32_t& codePoint)
 {
     if (index >= text.size()) {
         return false;
@@ -132,7 +136,8 @@ char32_t toLowerCodePoint(char32_t codePoint)
     return codePoint;
 }
 
-void pushWordIfNotEmpty(const std::string& currentWord, std::vector<std::string>& words)
+void pushWordIfNotEmpty(const std::string& currentWord,
+                        std::vector<std::string>& words)
 {
     if (!currentWord.empty()) {
         words.push_back(currentWord);
@@ -149,7 +154,8 @@ void normalizeWordRecursive(const std::string& word,
 
     char32_t codePoint = 0;
     std::size_t nextIndex = index;
-    if (decodeNextCodePoint(word, nextIndex, codePoint) && isWordCodePoint(codePoint)) {
+    if (decodeNextCodePoint(word, nextIndex, codePoint) &&
+        isWordCodePoint(codePoint)) {
         appendCodePoint(result, toLowerCodePoint(codePoint));
     }
 
@@ -191,17 +197,22 @@ std::string formatReportRecordLine(const WordRecord& record)
     return line.str();
 }
 
-std::vector<std::string> makeReportTableLines(const FrequencyDictionary& dictionary)
+std::vector<std::string> makeReportTableLines(
+    const FrequencyDictionary& dictionary)
 {
     std::vector<std::string> lines;
     std::vector<WordRecord> records = dictionary.toVector();
     lines.reserve(records.size());
 
-    std::transform(records.cbegin(), records.cend(), std::back_inserter(lines), formatReportRecordLine);
+    std::transform(records.cbegin(),
+                   records.cend(),
+                   std::back_inserter(lines),
+                   formatReportRecordLine);
     return lines;
 }
 
-std::vector<std::string> makeReportTopLines(const FrequencyDictionary& dictionary)
+std::vector<std::string> makeReportTopLines(
+    const FrequencyDictionary& dictionary)
 {
     std::vector<WordRecord> top = dictionary.topThree();
     std::vector<std::string> lines;
@@ -211,7 +222,11 @@ std::vector<std::string> makeReportTopLines(const FrequencyDictionary& dictionar
     std::transform(top.cbegin(), top.cend(), std::back_inserter(lines),
                    [&position](const WordRecord& record) {
                        std::ostringstream line;
-                       line << position << ") " << record.word << " — " << record.count;
+                       line << position
+                            << ") "
+                            << record.word
+                            << " — "
+                            << record.count;
                        ++position;
                        return line.str();
                    });
@@ -220,7 +235,9 @@ std::vector<std::string> makeReportTopLines(const FrequencyDictionary& dictionar
 
 void writeLines(std::ostream& output, const std::vector<std::string>& lines)
 {
-    std::copy(lines.cbegin(), lines.cend(), std::ostream_iterator<std::string>(output, "\n"));
+    std::copy(lines.cbegin(),
+              lines.cend(),
+              std::ostream_iterator<std::string>(output, "\n"));
 }
 
 void addWordsRecursive(std::vector<std::string>::const_iterator current,
@@ -242,7 +259,11 @@ void printTestTitle(int number, const std::string& title)
 
 void printCaughtException(const std::exception& exception)
 {
-    std::cerr << "  Поймано: >> " << TEST_ERROR_PREFIX << exception.what() << "\n";
+    std::cerr
+        << "  Поймано: >> "
+        << TEST_ERROR_PREFIX
+        << exception.what()
+        << "\n";
 }
 
 void insertWordsRecursive(FrequencyDictionary& dictionary,
@@ -257,7 +278,8 @@ void insertWordsRecursive(FrequencyDictionary& dictionary,
     insertWordsRecursive(dictionary, std::next(current), last);
 }
 
-void insertWords(FrequencyDictionary& dictionary, const std::vector<std::string>& words)
+void insertWords(FrequencyDictionary& dictionary,
+                 const std::vector<std::string>& words)
 {
     insertWordsRecursive(dictionary, words.cbegin(), words.cend());
 }
@@ -307,7 +329,9 @@ void testRemoveMissingWord()
     dictionary.insert("apple");
 
     assert(!dictionary.remove("orange"));
-    std::cout << "  Ожидаемый результат: слово 'orange' отсутствует, удаление не выполнено.\n";
+    std::cout
+        << "  Ожидаемый результат: слово 'orange' отсутствует, "
+        << "удаление не выполнено.\n";
 }
 
 void testEmptyWordExceptions()
@@ -386,7 +410,9 @@ void testTopThree()
 
 void testTextExtraction()
 {
-    std::vector<std::string> words = extractWords("Hello, HELLO! Мир мир. Ёж и ёж.");
+    std::vector<std::string> words = extractWords(
+        "Hello, HELLO! Мир мир. Ёж и ёж."
+    );
     assert(words.size() == 7);
     assert(words[0] == "hello");
     assert(words[1] == "hello");
@@ -399,7 +425,9 @@ void testTextExtraction()
 
 void testDictionaryFromText()
 {
-    FrequencyDictionary dictionary = buildDictionaryFromText("Data data tree. Tree, graph!");
+    FrequencyDictionary dictionary = buildDictionaryFromText(
+        "Data data tree. Tree, graph!"
+    );
 
     int count = 0;
     assert(dictionary.search("data", count));
@@ -522,7 +550,10 @@ std::vector<WordRecord> FrequencyDictionary::toVector() const
     std::vector<WordRecord> result;
     result.reserve(records_.size());
 
-    std::transform(records_.cbegin(), records_.cend(), std::back_inserter(result), toWordRecord);
+    std::transform(records_.cbegin(),
+                   records_.cend(),
+                   std::back_inserter(result),
+                   toWordRecord);
     return result;
 }
 
@@ -628,7 +659,8 @@ std::vector<std::string> extractWords(const std::string& text)
     return words;
 }
 
-void addTextToDictionary(const std::string& text, FrequencyDictionary& dictionary)
+void addTextToDictionary(const std::string& text,
+                         FrequencyDictionary& dictionary)
 {
     std::vector<std::string> words = extractWords(text);
     addWordsRecursive(words.cbegin(), words.cend(), dictionary);
@@ -671,7 +703,10 @@ bool runAllTests()
     printTestTitle(8, "Определение трех наиболее частых слов");
     testTopThree();
 
-    printTestTitle(9, "Разбор текста на слова, обработка регистра и знаков препинания");
+    printTestTitle(
+        9,
+        "Разбор текста на слова, обработка регистра и знаков препинания"
+    );
     testTextExtraction();
 
     printTestTitle(10, "Формирование словаря по тексту");
