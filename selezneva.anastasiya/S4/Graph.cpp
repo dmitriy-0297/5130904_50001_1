@@ -22,7 +22,7 @@ std::ostream & operator<<(std::ostream & os, const Graph & graph) {
             << "): вершин " << graph.vertexCount_ << ", ребер " << graph.edgeCount_ << "\n";
 
         int i = 0;
-        std::for_each(graph.adjacencyList_.begin(), graph.adjacencyList_.end(), 
+        std::for_each(graph.adjacencyList_.begin(), graph.adjacencyList_.end(),
             [&](const auto& list) {
             os << "  " << i++ << ":";
             std::copy(list.begin(), list.end(), std::ostream_iterator<Graph::Edge>(os, ""));
@@ -177,7 +177,7 @@ void Graph::dfsVisit(int vertex, std::vector<int>& colors, std::vector<int>& res
     colors[vertex] = GRAY;
     result.push_back(vertex);
 
-    std::for_each(adjacencyList_[vertex].begin(), adjacencyList_[vertex].end(), 
+    std::for_each(adjacencyList_[vertex].begin(), adjacencyList_[vertex].end(),
         [&](const Edge& e) {
         if (colors[e.vertex] == WHITE) {
             dfsVisit(e.vertex, colors, result);
