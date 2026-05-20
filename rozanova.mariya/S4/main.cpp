@@ -9,7 +9,7 @@
 
 using namespace std;
 
-// Константы ошибок
+//Константы ошибок
 const char* const ERR_INVALID_INPUT =
     "Ошибка: Некорректный ввод! Введите целое неотрицательное число";
 const char* const ERR_NOT_A_NUMBER =
