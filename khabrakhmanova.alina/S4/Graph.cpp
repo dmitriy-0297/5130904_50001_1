@@ -32,13 +32,13 @@ int DisjointSet::find(int x) {
 }
 
 void DisjointSet::unite(int x, int y) {
-    if (x < 0 || x >= static_cast<int>(parent.size()) || 
+    if (x < 0 || x >= static_cast<int>(parent.size()) ||
         y < 0 || y >= static_cast<int>(parent.size())) {
         throw std::runtime_error("DisjointSet: index out of bounds");
     }
     int rootX = find(x);
     int rootY = find(y);
-    
+
     if (rootX != rootY) {
         if (rank[rootX] < rank[rootY]) {
             parent[rootX] = rootY;
@@ -57,7 +57,7 @@ bool DisjointSet::isConnected(int x, int y) {
 
 Graph::Graph() : vertexCount(0), edgeCount(0) {}
 
-Graph::Graph(const Graph& other) 
+Graph::Graph(const Graph& other)
     : adjacencyList(other.adjacencyList), vertexCount(other.vertexCount), edgeCount(other.edgeCount) {}
 
 Graph& Graph::operator=(const Graph& other) {
@@ -115,7 +115,7 @@ bool Graph::hasEdge(int from, int to) const {
     if (!hasNode(from) || !hasNode(to)) {
         return false;
     }
-    
+
     const auto& edges = adjacencyList.at(from);
     for (const auto& edge : edges) {
         if (edge.to == to) {
@@ -129,7 +129,7 @@ int Graph::getEdgeWeight(int from, int to) const {
     if (!hasNode(from) || !hasNode(to)) {
         throw std::runtime_error(ERROR_INVALID_NODE);
     }
-    
+
     const auto& edges = adjacencyList.at(from);
     for (const auto& edge : edges) {
         if (edge.to == to) {
@@ -152,21 +152,21 @@ void Graph::addNode(int node) {
     if (hasNode(node)) {
         throw std::runtime_error(ERROR_NODE_ALREADY_EXISTS);
     }
-    
+
     adjacencyList[node] = std::vector<Edge>();
     ++vertexCount;
-    
+
 }
 
 void Graph::removeNode(int node) {
     validateNode(node);
-    
+
     for (auto& pair : adjacencyList) {
         auto& edges = pair.second;
         edges.erase(std::remove_if(edges.begin(), edges.end(),
             [node](const Edge& e) { return e.to == node; }), edges.end());
     }
-    
+
     edgeCount -= static_cast<int>(adjacencyList[node].size());
     adjacencyList.erase(node);
     --vertexCount;
@@ -177,7 +177,7 @@ void Graph::addEdge(int from, int to, int weight) {
     validateNode(to);
     validateNonNegativeWeight(weight);
     validateNoSelfLoop(from, to);
-    
+
     bool edgeExists = false;
     auto& edgesFrom = adjacencyList[from];
     for (auto& edge : edgesFrom) {
@@ -187,7 +187,7 @@ void Graph::addEdge(int from, int to, int weight) {
             break;
         }
     }
-    
+
     auto& edgesTo = adjacencyList[to];
     for (auto& edge : edgesTo) {
         if (edge.to == from) {
@@ -195,7 +195,7 @@ void Graph::addEdge(int from, int to, int weight) {
             break;
         }
     }
-    
+
     if (!edgeExists) {
         adjacencyList[from].push_back(Edge(to, weight));
         adjacencyList[to].push_back(Edge(from, weight));
@@ -206,9 +206,9 @@ void Graph::addEdge(int from, int to, int weight) {
 void Graph::removeEdge(int from, int to) {
     validateNode(from);
     validateNode(to);
-    
+
     bool edgeRemoved = false;
-    
+
     auto& edgesFrom = adjacencyList[from];
     auto itFrom = std::remove_if(edgesFrom.begin(), edgesFrom.end(),
         [to](const Edge& e) { return e.to == to; });
@@ -216,30 +216,30 @@ void Graph::removeEdge(int from, int to) {
         edgesFrom.erase(itFrom, edgesFrom.end());
         edgeRemoved = true;
     }
-    
+
     auto& edgesTo = adjacencyList[to];
     auto itTo = std::remove_if(edgesTo.begin(), edgesTo.end(),
         [from](const Edge& e) { return e.to == from; });
     if (itTo != edgesTo.end()) {
         edgesTo.erase(itTo, edgesTo.end());
     }
-    
+
     if (!edgeRemoved) {
         throw std::runtime_error(ERROR_EDGE_NOT_FOUND);
     }
-    
+
     --edgeCount;
 }
 
 std::vector<EdgeForKruskal> Graph::kruskalMST() const {
     std::vector<EdgeForKruskal> result;
-    
+
     if (isEmpty()) {
         throw std::runtime_error(ERROR_GRAPH_EMPTY);
     }
-    
+
     validateNoNegativeWeights();
-    
+
     std::vector<EdgeForKruskal> allEdges;
     for (const auto& pair : adjacencyList) {
         int from = pair.first;
@@ -249,73 +249,73 @@ std::vector<EdgeForKruskal> Graph::kruskalMST() const {
             }
         }
     }
-    
+
     std::sort(allEdges.begin(), allEdges.end(),
         [](const EdgeForKruskal& a, const EdgeForKruskal& b) {
             return a.weight < b.weight;
         });
-    
+
     DisjointSet ds(vertexCount);
-    
+
     for (const auto& edge : allEdges) {
         if (!ds.isConnected(edge.from, edge.to)) {
             ds.unite(edge.from, edge.to);
             result.push_back(edge);
         }
     }
-    
+
     if (vertexCount > 1 && static_cast<int>(result.size()) != vertexCount - 1) {
         throw std::runtime_error(ERROR_NO_MST);
     }
-    
+
     return result;
 }
 
 std::vector<EdgeForKruskal> Graph::primMST(int start) const {
     std::vector<EdgeForKruskal> result;
-    
+
     if (isEmpty()) {
         throw std::runtime_error(ERROR_GRAPH_EMPTY);
     }
-    
+
     if (!hasNode(start)) {
         throw std::runtime_error(ERROR_INVALID_NODE);
     }
-    
+
     validateNoNegativeWeights();
-    
+
     std::vector<bool> visited(vertexCount, false);
     std::vector<int> minEdge(vertexCount, INT_MAX);
     std::vector<int> parent(vertexCount, -1);
-    
+
     minEdge[start] = 0;
-    
+
     for (int count = 0; count < vertexCount; ++count) {
         int u = -1;
         int min = INT_MAX;
-        
+
         for (int i = 0; i < vertexCount; ++i) {
             if (!visited[i] && minEdge[i] < min) {
                 min = minEdge[i];
                 u = i;
             }
         }
-        
+
         if (u == -1) {
             throw std::runtime_error(ERROR_NO_MST);
         }
-        
+
         visited[u] = true;
-        
+
         if (parent[u] != -1) {
             result.push_back(EdgeForKruskal(parent[u], u, minEdge[u]));
         }
-        
+
         if (adjacencyList.find(u) != adjacencyList.end()) {
             for (const auto& edge : adjacencyList.at(u)) {
                 int v = edge.to;
                 int weight = edge.weight;
-                
+
                 if (!visited[v] && weight < minEdge[v]) {
                     minEdge[v] = weight;
                     parent[v] = u;
@@ -323,7 +323,7 @@ std::vector<EdgeForKruskal> Graph::primMST(int start) const {
             }
         }
     }
-    
+
     return result;
 }
 
@@ -332,12 +332,12 @@ void Graph::printGraph() const {
         std::cout << "Graph is empty" << std::endl;
         return;
     }
-    
+
     std::cout << "\n=== Graph (" << vertexCount << " vertices, " << edgeCount << " edges) ===" << std::endl;
     for (const auto& pair : adjacencyList) {
         std::cout << "Vertex " << pair.first << ": ";
         const auto& edges = pair.second;
-        
+
         if (edges.empty()) {
             std::cout << "(no edges)";
         } else {
@@ -353,18 +353,18 @@ void Graph::printGraph() const {
 bool Graph::isConnected() const {
     if (isEmpty()) return true;
     if (vertexCount == 1) return true;
-    
+
     std::vector<bool> visited(vertexCount, false);
     std::queue<int> q;
-    
+
     int start = adjacencyList.begin()->first;
     visited[start] = true;
     q.push(start);
-    
+
     while (!q.empty()) {
         int u = q.front();
         q.pop();
-        
+
         if (adjacencyList.find(u) != adjacencyList.end()) {
             for (const auto& edge : adjacencyList.at(u)) {
                 int v = edge.to;
@@ -375,13 +375,13 @@ bool Graph::isConnected() const {
             }
         }
     }
-    
+
     for (const auto& pair : adjacencyList) {
         if (!visited[pair.first]) {
             return false;
         }
     }
-    
+
     return true;
 }
 

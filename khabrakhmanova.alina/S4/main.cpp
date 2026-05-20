@@ -6,13 +6,13 @@
 
 bool isInteger(const std::string& str) {
     if (str.empty()) return false;
-    
+
     size_t start = 0;
     if (str[0] == '-') {
         if (str.length() == 1) return false;
         start = 1;
     }
-    
+
     for (size_t i = start; i < str.length(); ++i) {
         if (!std::isdigit(str[i])) return false;
     }
@@ -89,12 +89,12 @@ void handleRemoveNode(Graph& graph, const std::string& arg) {
         std::cerr << ERROR_GRAPH_EMPTY << std::endl;
         return;
     }
-    
+
     if (arg.empty() || !isPositiveInteger(arg)) {
         std::cerr << "Error: Invalid node index. Usage: remove_node node" << std::endl;
         return;
     }
-    
+
     int node = std::stoi(arg);
     try {
         graph.removeNode(node);
@@ -109,7 +109,7 @@ void handleRemoveEdge(Graph& graph, const std::string& args) {
         std::cerr << ERROR_GRAPH_EMPTY << std::endl;
         return;
     }
-    
+
     std::istringstream iss(args);
     int from, to;
     if (iss >> from >> to) {
@@ -132,15 +132,15 @@ void handleKruskal(Graph& graph) {
         std::cerr << ERROR_GRAPH_EMPTY << std::endl;
         return;
     }
-    
+
     try {
         auto mst = graph.kruskalMST();
-        
+
         if (mst.empty()) {
             std::cout << "MST is empty (graph has 0 or 1 vertices)" << std::endl;
             return;
         }
-        
+
         std::cout << "\nMinimum Spanning Tree (Kruskal):" << std::endl;
         for (const auto& edge : mst) {
             std::cout << "  " << edge.from << " --(" << edge.weight << ")-- " << edge.to << std::endl;
@@ -156,7 +156,7 @@ void handlePrim(Graph& graph, const std::string& arg) {
         std::cerr << ERROR_GRAPH_EMPTY << std::endl;
         return;
     }
-    
+
     int start = 0;
     if (!arg.empty()) {
         if (!isPositiveInteger(arg)) {
@@ -165,15 +165,15 @@ void handlePrim(Graph& graph, const std::string& arg) {
         }
         start = std::stoi(arg);
     }
-    
+
     try {
         auto mst = graph.primMST(start);
-        
+
         if (mst.empty()) {
             std::cout << "MST is empty (graph has 0 or 1 vertices)" << std::endl;
             return;
         }
-        
+
         std::cout << "\nMinimum Spanning Tree (Prim, start=" << start << "):" << std::endl;
         for (const auto& edge : mst) {
             std::cout << "  " << edge.from << " --(" << edge.weight << ")-- " << edge.to << std::endl;
@@ -189,7 +189,7 @@ void handleConnected(Graph& graph) {
         std::cout << "Graph is empty" << std::endl;
         return;
     }
-    
+
     bool connected = graph.isConnected();
     if (connected) {
         std::cout << "Graph is connected" << std::endl;
@@ -200,7 +200,7 @@ void handleConnected(Graph& graph) {
 
 void runTests() {
     std::cout << "\nRUNNING UNIT TESTS\n" << std::endl;
-    
+
     // Test 1: Create empty graph
     std::cout << "Test 1: Create empty graph" << std::endl;
     Graph g1;
@@ -209,20 +209,20 @@ void runTests() {
     } else {
         std::cout << "  FAIL" << std::endl;
     }
-    
+
     // Test 2: Add nodes
     std::cout << "\nTest 2: Add nodes" << std::endl;
     Graph g2;
     g2.addNode();
     g2.addNode();
     g2.addNode();
-    if (g2.getVertexCount() == 3 && !g2.isEmpty() && 
+    if (g2.getVertexCount() == 3 && !g2.isEmpty() &&
         g2.hasNode(0) && g2.hasNode(1) && g2.hasNode(2) && !g2.hasNode(3)) {
         std::cout << "  PASS" << std::endl;
     } else {
         std::cout << "  FAIL" << std::endl;
     }
-    
+
     // Test 3: Add edges
     std::cout << "\nTest 3: Add edges" << std::endl;
     Graph g3;
@@ -237,7 +237,7 @@ void runTests() {
     } else {
         std::cout << "  FAIL" << std::endl;
     }
-    
+
     // Test 4: Negative weight validation
     std::cout << "\nTest 4: Negative weight validation" << std::endl;
     Graph g4;
@@ -250,7 +250,7 @@ void runTests() {
         if (std::string(e.what()) == ERROR_NEGATIVE_WEIGHT) caught = true;
     }
     std::cout << (caught ? "  PASS" : "  FAIL") << std::endl;
-    
+
     // Test 5: Kruskal's MST
     std::cout << "\nTest 5: Kruskal's MST algorithm" << std::endl;
     Graph g5;
@@ -261,7 +261,7 @@ void runTests() {
     g5.addEdge(1, 2, 4);
     g5.addEdge(1, 3, 5);
     g5.addEdge(2, 3, 6);
-    
+
     try {
         auto mst5 = g5.kruskalMST();
         int weight5 = g5.getTotalWeight(mst5);
@@ -273,7 +273,7 @@ void runTests() {
     } catch (...) {
         std::cout << "  FAIL" << std::endl;
     }
-    
+
     // Test 6: Prim's MST
     std::cout << "\nTest 6: Prim's MST algorithm" << std::endl;
     Graph g6;
@@ -284,7 +284,7 @@ void runTests() {
     g6.addEdge(1, 2, 4);
     g6.addEdge(1, 3, 5);
     g6.addEdge(2, 3, 6);
-    
+
     try {
         auto mst6 = g6.primMST(0);
         int weight6 = g6.getTotalWeight(mst6);
@@ -296,7 +296,7 @@ void runTests() {
     } catch (...) {
         std::cout << "  FAIL" << std::endl;
     }
-    
+
     // Test 7: Self-loop rejection
     std::cout << "\nTest 7: Self-loop rejection" << std::endl;
     Graph g7;
@@ -308,37 +308,37 @@ void runTests() {
         if (std::string(e.what()) == ERROR_SELF_LOOP) caught = true;
     }
     std::cout << (caught ? "  PASS" : "  FAIL") << std::endl;
-    
+
     std::cout << "\nALL TESTS COMPLETED\n" << std::endl;
 }
 
 int main() {
     Graph graph;
     std::string line;
-    
+
     std::cout << "Minimum Spanning Tree of Undirected Graph" << std::endl;
     std::cout << "Algorithms: Kruskal & Prim" << std::endl;
     printHelp();
-    
+
     while (true) {
         std::cout << "> ";
         if (!std::getline(std::cin, line)) {
             std::cout << "\nEOF detected. Exiting program..." << std::endl;
             break;
         }
-        
+
         if (line.empty()) continue;
-        
+
         std::istringstream iss(line);
         std::string cmd;
         iss >> cmd;
-        
+
         std::string args;
         std::getline(iss, args);
         if (!args.empty() && args[0] == ' ') {
             args = args.substr(1);
         }
-        
+
         if (cmd == "exit") {
             std::cout << "Exiting program..." << std::endl;
             break;
@@ -368,6 +368,6 @@ int main() {
             std::cerr << "Unknown command: " << cmd << ". Type help for available commands." << std::endl;
         }
     }
-    
+
     return EXIT_SUCCES;
 }
