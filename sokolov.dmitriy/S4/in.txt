@@ -38,8 +38,6 @@ spring весна
 SPRING пружина
 spring родник
 WATCH часы
-
-   
 SLOW
 WATCH смотреть
 watch наблюдать
