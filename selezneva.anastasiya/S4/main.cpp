@@ -7,7 +7,6 @@
 #include <map>
 #include <algorithm>
 #include <iterator>
-#include <windows.h>
 #include <locale.h>
 
 const std::string ERROR_NOT_A_NUMBER = "Ошибка: Ожидалось целое число";
@@ -37,7 +36,6 @@ namespace selezneva {
 
 int main() {
 
-    SetConsoleOutputCP(1251);
     setlocale(LC_ALL, "Russian");
 
     selezneva::runApplication();

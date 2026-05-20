@@ -32,15 +32,17 @@ std::ostream & operator<<(std::ostream & os, const Graph & graph) {
     return os;
 }
 
-Graph::Graph(bool oriented) : oriented_(oriented) {}
+Graph::Graph(bool oriented): vertexCount_(0), edgeCount_(0), oriented_(oriented){}
 
-Graph::Graph(int vertexCount, bool oriented) : oriented_(oriented), vertexCount_(vertexCount) {
-    if (vertexCount < 0) {
+Graph::Graph(int vertexCount, bool oriented)
+    : vertexCount_(vertexCount), edgeCount_(0), oriented_(oriented)
+{
+    if (vertexCount < 0)
+    {
         throw std::invalid_argument(ERROR_INVALID_COUNT);
     }
     adjacencyList_.resize(vertexCount);
 }
-
 bool Graph::isEmpty() const {
     return vertexCount_ == 0;
 }
