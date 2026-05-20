@@ -80,7 +80,7 @@ void handleTop(FrequencyDictionary& dictionary, const CommandArguments& argument
 void handleStats(FrequencyDictionary& dictionary, const CommandArguments& arguments);
 void handleExit(FrequencyDictionary& dictionary, const CommandArguments& arguments);
 
-} 
+}
 
 int main(int argc, char* argv[])
 {
