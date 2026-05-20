@@ -369,5 +369,5 @@ int main() {
         }
     }
 
-    return EXIT_SUCCES;
+    return EXIT_SUCCESS;
 }
