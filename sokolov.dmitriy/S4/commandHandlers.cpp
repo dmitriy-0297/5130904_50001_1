@@ -5,6 +5,7 @@
 #include "dictPairIn.hpp"
 #include "toUpperCase.hpp"
 #include <algorithm>
+#include <cstdlib>
 #include <cwchar>
 #include <cwctype>
 #include <fstream>
@@ -299,7 +300,7 @@ void handleLoad(std::wistringstream &args, ERDict &dict) {
     std::wifstream ifs;
     ifs.imbue(std::locale(""));
 
-    ifs.open(filename);
+    ifs.open(wstring_to_string(filename));
 
     if (!ifs.is_open()) {
         std::wcerr << ERROR_CANNOT_OPEN_FILE;
@@ -326,4 +327,10 @@ void handleLoad(std::wistringstream &args, ERDict &dict) {
 
 bool streamIsEmpty(std::wistream &stream) {
     return (stream >> std::ws).peek() == std::char_traits<wchar_t>::eof();
+}
+
+std::string wstring_to_string(const std::wstring &wstr) {
+    std::string str(wstr.length(), 0);
+    std::wcstombs(&str[0], wstr.c_str(), wstr.length());
+    return str;
 }

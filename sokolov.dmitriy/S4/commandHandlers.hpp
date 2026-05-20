@@ -29,4 +29,6 @@ void handleLoad(std::wistringstream &args, ERDict &dict);
 
 bool streamIsEmpty(std::wistream &stream);
 
+std::string wstring_to_string(const std::wstring &wstr);
+
 #endif

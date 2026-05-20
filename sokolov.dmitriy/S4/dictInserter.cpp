@@ -1,4 +1,5 @@
 #include "dictInserter.hpp"
+#include <algorithm>
 #include <iterator>
 #include <list>
 #include <map>
