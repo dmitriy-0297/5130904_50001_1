@@ -25,4 +25,4 @@ public:
     void incrementLine() { ++currentLine_; }
 };
 
-#endif // DATA_MANAGER_HPP
+#endif
