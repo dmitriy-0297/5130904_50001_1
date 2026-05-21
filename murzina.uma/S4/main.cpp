@@ -7,95 +7,121 @@
 
 void showHelp() {
     std::cout << "\nCommands:\n"
-              << "  add <text>          - add line of text\n"
-              << "  print               - show cross-references\n"
-              << "  find <word>         - show lines for word\n"
-              << "  save <filename>     - save to file\n"
-              << "  clear               - clear all data\n"
-              << "  test                - run built-in tests\n"
-              << "  help                - this help\n"
-              << "  exit                - exit program\n"
-              << "EOF (Ctrl+Z/Ctrl+D)   - also exit\n\n";
+              << "  1 - add <text>          - add line of text\n"
+              << "  2 - print               - show cross-references\n"
+              << "  3 - find <word>         - show lines for word\n"
+              << "  4 - save <filename>     - save to file\n"
+              << "  5 - clear               - clear all data\n"
+              << "  6 - test                - run built-in tests\n"
+              << "  0 - help                - this help\n"
+              << "  9 - exit                - exit program\n"
+              << "EOF (Ctrl+Z/Ctrl+D)       - also exit\n\n";
+}
+
+int getCommandCode(const std::string& cmd) {
+    if (cmd == "add" || cmd == "1") return 1;
+    if (cmd == "print" || cmd == "2") return 2;
+    if (cmd == "find" || cmd == "3") return 3;
+    if (cmd == "save" || cmd == "4") return 4;
+    if (cmd == "clear" || cmd == "5") return 5;
+    if (cmd == "test" || cmd == "6") return 6;
+    if (cmd == "help" || cmd == "0") return 0;
+    if (cmd == "exit" || cmd == "9") return 9;
+    return -1;
 }
 
 void processCommand(CrossReferences& cr, const std::string& line) {
     if (line.empty()) return;
     
     std::istringstream iss(line);
-    std::string cmd;
-    iss >> cmd;
+    std::string cmdStr;
+    iss >> cmdStr;
     
-    if (cmd == "exit") {
-        throw std::runtime_error("exit");
-    }
-    else if (cmd == "help") {
-        showHelp();
-    }
-    else if (cmd == "test") {
-        cr.runTests();
-    }
-    else if (cmd == "add") {
-        std::string text;
-        std::getline(iss, text);
-        if (!text.empty() && text[0] == ' ') text.erase(0, 1);
-        if (!text.empty()) {
-            try {
-                cr.addText(text);
-                std::cout << "Line added successfully.\n";
-            } catch (const std::invalid_argument& e) {
-                std::cout << "Error: " << e.what() << "\n";
-            }
-        } else {
-            std::cout << "Error: empty text.\n";
-        }
-    }
-    else if (cmd == "print") {
-        cr.printReferences();
-    }
-    else if (cmd == "find") {
-        std::string word;
-        iss >> word;
-        if (word.empty()) {
-            std::cout << "Usage: find <word>\n";
-        } else {
-            try {
-                auto linesSet = cr.getLinesForWord(word);
-                if (linesSet.empty()) {
-                    std::cout << "Word '" << word << "' not found.\n";
-                } else {
-                    std::cout << word << ": ";
-                    bool first = true;
-                    for (int lineNum : linesSet) {
-                        if (!first) std::cout << ", ";
-                        std::cout << lineNum;
-                        first = false;
-                    }
-                    std::cout << "\n";
+    int cmd = getCommandCode(cmdStr);
+    
+    switch (cmd) {
+        case 9:
+            throw std::runtime_error("exit");
+            
+        case 0:
+            showHelp();
+            break;
+            
+        case 6:
+            cr.runTests();
+            break;
+            
+        case 5:
+            cr.clear();
+            std::cout << "All data cleared.\n";
+            break;
+            
+        case 4: {
+            std::string filename;
+            iss >> filename;
+            if (filename.empty()) {
+                std::cout << "Usage: save <filename> or 4 <filename>\n";
+            } else {
+                try {
+                    cr.saveToFile(filename);
+                } catch (const std::exception& e) {
+                    std::cout << "Error: " << e.what() << "\n";
                 }
-            } catch (const std::invalid_argument& e) {
-                std::cout << "Error: " << e.what() << "\n";
             }
+            break;
         }
-    }
-    else if (cmd == "save") {
-        std::string filename;
-        iss >> filename;
-        if (filename.empty()) {
-            std::cout << "Usage: save <filename>\n";
-        } else {
-            try {
-                cr.saveToFile(filename);
-            } catch (const std::exception& e) {
-                std::cout << "Error: " << e.what() << "\n";
+            
+        case 3: {
+            std::string word;
+            iss >> word;
+            if (word.empty()) {
+                std::cout << "Usage: find <word> or 3 <word>\n";
+            } else {
+                try {
+                    auto linesSet = cr.getLinesForWord(word);
+                    if (linesSet.empty()) {
+                        std::cout << "Word '" << word << "' not found.\n";
+                    } else {
+                        std::cout << word << ": ";
+                        bool first = true;
+                        for (int lineNum : linesSet) {
+                            if (!first) std::cout << ", ";
+                            std::cout << lineNum;
+                            first = false;
+                        }
+                        std::cout << "\n";
+                    }
+                } catch (const std::invalid_argument& e) {
+                    std::cout << "Error: " << e.what() << "\n";
+                }
             }
+            break;
         }
-    }
-    else if (cmd == "clear") {
-        cr.clear();
-        std::cout << "All data cleared.\n";
-    }
-    else {
-        std::cout << "Unknown command. Type 'help'.\n";
+            
+        case 2:
+            cr.printReferences();
+            break;
+            
+        case 1: {
+            std::string text;
+            std::getline(iss, text);
+            if (!text.empty() && text[0] == ' ') text.erase(0, 1);
+            if (!text.empty()) {
+                try {
+                    cr.addText(text);
+                    std::cout << "Line added successfully.\n";
+                } catch (const std::invalid_argument& e) {
+                    std::cout << "Error: " << e.what() << "\n";
+                }
+            } else {
+                std::cout << "Error: empty text.\n";
+            }
+            break;
+        }
+            
+        default:
+            std::cout << "Unknown command. Type 'help' or '0'.\n";
+            break;
     }
 }
 
