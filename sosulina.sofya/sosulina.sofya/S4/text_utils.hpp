@@ -10,4 +10,4 @@ std::vector<std::string> tokenize(const std::string& line);
 void processCommand(const std::string& line, DataManager& manager, bool& running);
 void showHelp();
 
-#endif // TEXT_UTILS_HPP
+#endif
