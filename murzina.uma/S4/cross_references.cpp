@@ -19,7 +19,7 @@ void CrossReferences::addText(const std::string& text) {
     if (text.empty()) {
         throw std::invalid_argument("Cannot add empty text");
     }
-    
+
     lines.push_back(text);
     int lineNum = lines.size();
 
@@ -56,7 +56,7 @@ void CrossReferences::saveToFile(const std::string& filename) const {
     if (filename.empty()) {
         throw std::invalid_argument("Filename cannot be empty");
     }
-    
+
     std::ofstream out(filename);
     if (!out) {
         throw std::runtime_error("Cannot open file for writing: " + filename);
@@ -89,7 +89,7 @@ std::set<int> CrossReferences::getLinesForWord(const std::string& word) const {
     if (word.empty()) {
         throw std::invalid_argument("Word cannot be empty");
     }
-    
+
     std::string cleaned = cleanWord(word);
     std::unordered_map<std::string, std::set<int> >::const_iterator it = fastIndex.find(cleaned);
     if (it != fastIndex.end()) {
@@ -100,13 +100,13 @@ std::set<int> CrossReferences::getLinesForWord(const std::string& word) const {
 
 void CrossReferences::runTests() {
     std::cout << "\nRUNNING TESTS\n";
-    
+
     std::cout << "\nTest 1: Adding lines\n";
     addText("Hello world");
     addText("Hello again");
     addText("This is a test line with world");
     std::cout << "Added 3 lines. Lines count: " << lines.size() << "\n";
-    
+
     std::cout << "\nTest 2: Finding words\n";
     std::set<int> linesForHello = getLinesForWord("hello");
     std::cout << "Lines for 'hello': ";
@@ -114,27 +114,27 @@ void CrossReferences::runTests() {
         std::cout << *it << " ";
     }
     std::cout << "\n";
-    
+
     std::set<int> linesForWorld = getLinesForWord("world");
     std::cout << "Lines for 'world': ";
     for (std::set<int>::iterator it = linesForWorld.begin(); it != linesForWorld.end(); ++it) {
         std::cout << *it << " ";
     }
     std::cout << "\n";
-    
+
     std::cout << "\nTest 3: All cross-references\n";
     printReferences();
-    
+
     std::cout << "\nTest 4: Saving to file\n";
     saveToFile("test_output.txt");
-    
+
     std::cout << "\nTest 5: Clearing data\n";
     clear();
     std::cout << "Is empty? " << (empty() ? "Yes" : "No") << "\n";
-    
+
     std::cout << "\nTest 6: Adding after clear\n";
     addText("Fresh start");
     printReferences();
-    
+
     std::cout << "\nTESTS FINISHED\n";
 }
