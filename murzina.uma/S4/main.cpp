@@ -32,30 +32,30 @@ int getCommandCode(const std::string& cmd) {
 
 void processCommand(CrossReferences& cr, const std::string& line) {
     if (line.empty()) return;
-
+    
     std::istringstream iss(line);
     std::string cmdStr;
     iss >> cmdStr;
-
+    
     int cmd = getCommandCode(cmdStr);
-
+    
     switch (cmd) {
         case 9:
             throw std::runtime_error("exit");
-
+            
         case 0:
             showHelp();
             break;
-
+            
         case 6:
             cr.runTests();
             break;
-
+            
         case 5:
             cr.clear();
             std::cout << "All data cleared.\n";
             break;
-
+            
         case 4: {
             std::string filename;
             iss >> filename;
@@ -70,7 +70,7 @@ void processCommand(CrossReferences& cr, const std::string& line) {
             }
             break;
         }
-
+            
         case 3: {
             std::string word;
             iss >> word;
@@ -78,15 +78,15 @@ void processCommand(CrossReferences& cr, const std::string& line) {
                 std::cout << "Usage: find <word> or 3 <word>\n";
             } else {
                 try {
-                    auto linesSet = cr.getLinesForWord(word);
+                    std::set<int> linesSet = cr.getLinesForWord(word);
                     if (linesSet.empty()) {
                         std::cout << "Word '" << word << "' not found.\n";
                     } else {
                         std::cout << word << ": ";
                         bool first = true;
-                        for (int lineNum : linesSet) {
+                        for (std::set<int>::iterator it = linesSet.begin(); it != linesSet.end(); ++it) {
                             if (!first) std::cout << ", ";
-                            std::cout << lineNum;
+                            std::cout << *it;
                             first = false;
                         }
                         std::cout << "\n";
@@ -97,11 +97,11 @@ void processCommand(CrossReferences& cr, const std::string& line) {
             }
             break;
         }
-
+            
         case 2:
             cr.printReferences();
             break;
-
+            
         case 1: {
             std::string text;
             std::getline(iss, text);
@@ -118,7 +118,7 @@ void processCommand(CrossReferences& cr, const std::string& line) {
             }
             break;
         }
-
+            
         default:
             std::cout << "Unknown command. Type 'help' or '0'.\n";
             break;
@@ -128,19 +128,19 @@ void processCommand(CrossReferences& cr, const std::string& line) {
 int main() {
     CrossReferences cr;
     std::string line;
-
+    
     std::cout << "Cross-References Laboratory Work\n";
     std::cout << "Using: std::map (red-black tree)\n";
     std::cout << "       std::unordered_map (hash table)\n\n";
     showHelp();
-
+    
     while (true) {
         std::cout << "> ";
         if (!std::getline(std::cin, line)) {
             std::cout << "\nEOF received. Exiting.\n";
             break;
         }
-
+        
         try {
             processCommand(cr, line);
         } catch (const std::runtime_error& e) {
@@ -152,6 +152,6 @@ int main() {
             std::cout << "Unexpected error: " << e.what() << "\n";
         }
     }
-
+    
     return EXIT_SUCCESS;
 }
